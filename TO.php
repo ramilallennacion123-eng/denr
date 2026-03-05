@@ -145,13 +145,19 @@
         .modal-overlay.active { 
             display: flex;
         }
+        a{
+            text-decoration: none;
+            color: white;
+        }
 
     </style>
 </head>
 <body>
 
     <div class="box">
-        <a href="../TO_MGB/index.php">back</a>
+        <div class="button-group">
+             <button><a href="../TO_MGB/index.php">back</a></button>
+        </div>
         <h1 class="card_title">Travel Order</h1>
         
        <form method="post" id="travelForm" enctype="multipart/form-data">

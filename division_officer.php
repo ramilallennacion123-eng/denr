@@ -2,13 +2,15 @@
 
 session_start();
 
-$logged_in_do_id = 101; 
+$logged_in_do_id = 102; 
 
 
 $host = 'localhost';
 $dbname = 'to_inventory';
 $username = 'root';
 $password = '';
+$name = "Antonio C. Marasigan";
+
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
@@ -77,9 +79,15 @@ $pending_orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </style>
 </head>
 <body>
+    <div>
+        <a href="TO.php">Create a Travel Order</a>
+    </div>
+    <div style="position: absolute; right: 20px; margin-top:-20px;">
+        <a href="logout.php">Log Out</a>
+    </div>
 
     <div class="dashboard-container">
-        <h2>Welcome, <?php $username ?> </h2>
+        <h2>Welcome, <?php echo $name ?> </h2>
         <p>You have <strong><?php echo count($pending_orders); ?></strong> travel orders waiting for your approval.</p>
 
         <?php if (count($pending_orders) > 0): ?>
@@ -103,7 +111,7 @@ $pending_orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <td><?php echo htmlspecialchars($order['destination']); ?></td>
                             <td><?php echo date('M d, Y', strtotime($order['departure_date'])); ?></td>
                             <td>
-                                <a href="review_to.php?id=<?php echo $order['id']; ?>" class="btn-review">Review & Approve</a>
+                                <a href="Review_to.php?id=<?php echo $order['id']; ?>" class="btn-review">Review & Approve</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

@@ -75,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (mysqli_stmt_execute($stmt)) {
             echo "Travel order successfully submitted and is awaiting Division Officer approval.";
-            // header("Location: success_page.php"); exit();
+             header("Location: message.php"); 
         } else {
             die("Error saving to database: " . mysqli_stmt_error($stmt));
         }
