@@ -26,7 +26,6 @@ function addPurpose() {
     container.insertBefore(row, btnGroup);
 } 
 
-
 function addAssistant() {
     const container = document.getElementById('assistant-container');
     const btnGroup = container.querySelector('.button-group');
@@ -63,22 +62,39 @@ function addAssistant() {
     container.insertBefore(row, btnGroup);
 }
 
-
-    function toggleCard() {
-        const modal = document.getElementById('modalOverlay');
-        if (modal.style.display === 'flex') {
-            modal.style.display = 'none';
-        } else {
-            modal.style.display = 'flex';
+function toggleCard() {
+    const modal = document.getElementById('modalOverlay');
+    
+    if (modal.style.display === 'flex') {
+        modal.style.display = 'none';
+    } else {
+        modal.style.display = 'flex';
+        const officerSelect = document.getElementById('Officer');
+        const displaySpan = document.getElementById('displayOfficerName');
+        
+        if (officerSelect && displaySpan) {
+            displaySpan.textContent = officerSelect.value ? officerSelect.value : "None selected";
         }
     }
+}
 
-    document.addEventListener('DOMContentLoaded', () => {
+function submitFinalForm() {
+    const form = document.getElementById('travelForm'); 
+    form.removeAttribute('target'); 
+    clearSession();
+    form.submit(); 
+}
+function clearSession() {
+    sessionStorage.removeItem('travelOrderData');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
     const form = document.querySelector('form');
 
-    loadFormData();
-
-    form.addEventListener('input', saveFormData);
+    if(form) {
+        loadFormData();
+        form.addEventListener('input', saveFormData);
+    }
 
     function saveFormData() {
         const formData = new FormData(form);
@@ -94,13 +110,10 @@ function addAssistant() {
                 formObject[key].push(value);
             }
         });
-
         sessionStorage.setItem('travelOrderData', JSON.stringify(formObject));
     }
-
     function loadFormData() {
-        const savedData = sessionStorage.getItem('travelOrderData');
-        
+        const savedData = sessionStorage.getItem('travelOrderData');   
         if (savedData) {
             const formObject = JSON.parse(savedData);
 
@@ -135,7 +148,3 @@ function addAssistant() {
         }
     }
 });
-//add to the sumbit button to clear the page
-function clearSession() {
-    sessionStorage.removeItem('travelOrderData');
-}
