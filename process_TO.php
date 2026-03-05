@@ -1,7 +1,7 @@
 <?php
-
 require_once 'vendor/autoload.php';
 use Dompdf\Dompdf;
+use Dompdf\Options;
 
 if(isset($_POST['TO_form'])){
 
@@ -22,34 +22,65 @@ if(isset($_POST['TO_form'])){
     $new_departure_date = new DateTime($departure_date);
     $new_arrival_date = new DateTime($arrival_date);
 
+    //signature
+    $esignature = ""; 
+    if (isset($_FILES['e_signature']) && $_FILES['e_signature']['error'] === UPLOAD_ERR_OK) {
+        $tmp_name = $_FILES['e_signature']['tmp_name'];
+        $mime_type = mime_content_type($tmp_name);
+        
+        if (strpos($mime_type, 'image/') === 0) {
+            $imgData = base64_encode(file_get_contents($tmp_name));
+            $src = 'data:' . $mime_type . ';base64,' . $imgData;
+            
+            $esignature = "<img src='" . $src . "' alt='E-Signature' style='max-width: 150px; max-height: 80px; display: block; margin: 0 auto; margin-bottom: -15px; position: relative; z-index: 10;'>";
+        }
+    }
+
 
     if(!empty($purposes)){
-                        foreach ($purposes as $purpose) {
-                            echo htmlspecialchars($purpose);
-                        }
-                    };
+        foreach ($purposes as $purpose) {
+            // echo htmlspecialchars($purpose);
+        }
+    };
+
+    switch($officer){
+    case '101':
+        $officer_name = "Antonio C. Marasigan";
+        break;
+    case '102':
+        $officer_name = "Arlen E Dayao";
+        break;
+    case '103':
+        $officer_name = "Cherry";
+        break;
+    case '104':
+        $officer_name = "Apple";
+        break;
+    }
 
     switch ($officer) {
-    case 'Antonio C. Marasigan':
+    case '101':
         $officer_position = "Engr. V/Chief MMD";
         break;
-    case 'banana':
-        $officer_position = "Position for Banana";
+    case '102':
+        $officer_position = "Division Chief";
         break;
-    case 'cherry':
+    case '103':
         $officer_position = "Position for Cherry";
         break;
-    case 'apple':
+    case '104':
         $officer_position = "Position for Apple";
         break;
     default:
         $officer_position = "";
-}
+    }
 
 
-    $dompdf = new Dompdf();
+    $options = new Options();
+    $options->set('isHtml5ParserEnabled', true);
+    $options->set('isRemoteEnabled', true); 
+    $dompdf = new Dompdf($options);
     
-
     $html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>'.strtoupper($name).'   TRAVEL ORDER </title>
     <style>
         body { font-family: "Times New Roman", Times, serif; }
@@ -215,7 +246,7 @@ if(isset($_POST['TO_form'])){
           <span style="position: absolute; right: 250px;">Approved:</span>
           </p>
           <p style="font-size:13px; margin-top:65px; font-weight: bold;margin-bottom:0px;">
-          <span><u>'.strtoupper($officer).'</u></span>
+          <span><u>'.strtoupper($officer_name).'</u></span>
           <span style="position: absolute; right: 130px;"><u>GUILLERMO A. MOLINA JR. IV</u></span>
           </p>
           <p style="font-size:12px;margin-top:0px">
@@ -225,10 +256,15 @@ if(isset($_POST['TO_form'])){
         </div>
         
         <h5 style="text-align:center;">AUTHORIZATION</h5>
-        <div style="text-indent: 2em; font-size:12px; text-align:justifty;">I hereby authorize the Accountant to deduct the corresponding amount of the unliquidated cash advance from my succeding
+        <div style="text-indent: 2em; font-size:12px; text-align:justify;">I hereby authorize the Accountant to deduct the corresponding amount of the unliquidated cash advance from my succeding
         for my failure to liquidate this travel within twenty(20) days upon return to my permanent official station pursuant to 
         Commission on Audit(COA) Circular No. 2012-004 dated November 28, 2012.</div>
-        <h5 style="text-align:center; margin-bottom:0px">'.strtoupper($name).'</h5>
+        
+        <div style="text-align: center; margin-top: 40px; margin-bottom: 0px;">
+            ' . $esignature . '
+        </div>
+        
+        <h5 style="text-align:center; margin-bottom:0px; margin-top: 0px; position: relative; z-index: 5;">'.strtoupper($name).'</h5>
         <div style="font-size:12px;text-align:center; margin-bottom:0px;">Official Employee</div>
         '; 
 
@@ -243,4 +279,4 @@ if(isset($_POST['TO_form'])){
     $dompdf->stream("sample.pdf", array("Attachment" => 0));   
     exit; 
 }
-?>
+?> 
